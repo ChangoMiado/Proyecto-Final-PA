@@ -1,5 +1,8 @@
 #include "framework.h"
 #include "Proyecto Final PA.h"
+#include <string>
+#include <commctrl.h>
+#include <commdlg.h>
 
 #define MAX_LOADSTRING 100
 
@@ -11,6 +14,8 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+bool menu(int opcion, HWND ventana);
+LRESULT CALLBACK PrincipalCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -70,8 +75,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; 
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+   HWND hWnd = CreateDialog(hInst, MAKEINTRESOURCE(ID_LOGGIN), NULL, WndProc);
 
    if (!hWnd)
    {
@@ -94,6 +98,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             switch (wmId)
             {
+            case ID_INICIOSESION: {
+                HWND ventana = CreateDialog(hInst, MAKEINTRESOURCE(ID_INICIO), NULL, PrincipalCallback);
+                ShowWindow(ventana, SW_SHOW);
+                EndDialog(hWnd, 0);
+            }break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
@@ -122,8 +131,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK PrincipalCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+
+    switch (message) {
+
+        case WM_COMMAND: {
+
+            int wmId = LOWORD(wParam);
+            if (menu(wmId, hWnd)) {
+            return FALSE;
+            }
+
+
+        switch (wmId) {
+
+            case WM_DESTROY: {
+
+                int respuesta = MessageBox(hWnd, L"¿Segur@ que quieres cerrar?", L"Todos los cambios serán guardados", MB_OKCANCEL);
+                if (respuesta == MB_OKCANCEL) {
+                EndDialog(hWnd, 0);
+                }
+            }
+        }
+        }
+    }
+}
+
+
+INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
+
     UNREFERENCED_PARAMETER(lParam);
     switch (message)
     {
@@ -139,4 +175,14 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+bool menu(int opcion, HWND ventana) {
+
+    switch (opcion) {
+
+
+
+    }
+
 }
